@@ -32,6 +32,7 @@
 </template>
   
 <script>
+import axios from 'axios';
 import JSEncrypt from 'jsencrypt';
 
 export default {
@@ -111,15 +112,17 @@ export default {
         username: this.form.username,
         email: this.form.email,
         mobile: this.form.mobile,
-        password: encryptedPassword
+        password: this.form.password
       };
       // 发送请求
       this.$axios.post('/api/register', submitData)
         .then(response => {
           // 处理成功响应
+          console.log("Success: ", response);
         })
         .catch(error => {
           // 处理错误响应
+          console.log("Failed: ", error);
         });
     },
     resetForm() {

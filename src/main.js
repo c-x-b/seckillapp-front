@@ -6,8 +6,23 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 
+const axiosIntance = axios.create();
 
-Vue.prototype.$axios = axios;
+axiosIntance.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = 'Bearer ' + token;
+      console.log("Authorization:", config.headers['Authorization']);
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
+axiosIntance.defaults.baseURL = "http://localhost:8081";
+Vue.prototype.$axios = axiosIntance;
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 

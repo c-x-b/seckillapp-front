@@ -15,10 +15,4 @@ npm run serve
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+直接部署在Login时会有跨域问题（CORS），使用docker+nginx部署

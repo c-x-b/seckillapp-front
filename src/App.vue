@@ -1,15 +1,31 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/register">Register</router-link> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/test">Test</router-link>
-    </nav>
+    <el-menu :default-active="'1'" class="el-menu" mode="horizontal" @select="handleSelect" router>
+      <!-- <div class="left-menu"> -->
+        <el-menu-item index="/">主界面</el-menu-item>
+        <el-menu-item index="/products">商品列表</el-menu-item>
+        <el-menu-item index="/userinfo">用户信息</el-menu-item>
+      <!-- </div> -->
+      <!-- <div class="right-menu"> -->
+        <el-menu-item index="/login">登录</el-menu-item>
+        <el-menu-item index="/register">注册</el-menu-item>
+      <!-- </div> -->
+    </el-menu>
+
     <router-view/>
   </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    handleSelect(key, keyPath) {
+      this.$router.push(key)
+    }
+  }
+}
+</script>
+
 
 <style lang="scss">
 #app {

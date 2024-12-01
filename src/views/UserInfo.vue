@@ -1,11 +1,11 @@
 <template>
 <el-row>
-  <el-button @click = "UserInfo">默认按钮</el-button>
+  <el-button @click = "UserInfo">查看登录信息</el-button>
 </el-row> 
 </template>
 <script>
 export default {
-    name: 'Test',
+    name: 'UserInfo',
       methods: {
         UserInfo() {
           this.$axios.get('/api/user/info')

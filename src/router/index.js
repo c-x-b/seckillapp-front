@@ -2,9 +2,16 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Register from '../views/Register.vue';
 import HomeView from '../views/HomeView.vue';
-import Test from '../views/Test.vue'
-import Login from '../views/Login.vue'
+import UserInfo from '../views/UserInfo.vue'
+import Login from '../views/Login.vue';
+import ProductList from '../views/ProductList.vue';
+import ProductDetail from '../views/ProductDetail.vue';
+//import { component } from 'vue/types/umd';
 
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 Vue.use(VueRouter);
 
 const routes = [
@@ -32,10 +39,20 @@ const routes = [
     component: Login
   },
   {
-    path: '/test',
-    name: 'Test',
-    component: Test
-  }
+    path: '/userinfo',
+    name: 'UserInfo',
+    component: UserInfo
+  },
+  {
+    path: '/products',
+    name: 'ProductList',
+    component: ProductList
+  },
+  {
+    path: '/products/:id',
+    name: 'ProductDetail',
+    component: ProductDetail
+  },
 ];
 
 const router = new VueRouter({

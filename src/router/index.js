@@ -4,6 +4,7 @@ import Register from '../views/Register.vue';
 import HomeView from '../views/HomeView.vue';
 import UserInfo from '../views/UserInfo.vue'
 import Login from '../views/Login.vue';
+import OrderList from '../views/OrderList.vue';
 import ProductList from '../views/ProductList.vue';
 import ProductDetail from '../views/ProductDetail.vue';
 //import { component } from 'vue/types/umd';
@@ -53,6 +54,11 @@ const routes = [
     name: 'ProductDetail',
     component: ProductDetail
   },
+  {
+    path: '/orders',
+    name: 'OrderList',
+    component: OrderList
+  }
 ];
 
 const router = new VueRouter({

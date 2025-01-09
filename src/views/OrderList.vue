@@ -8,6 +8,7 @@
             <th>商品信息</th>
             <th>订单状态</th>
             <th>下单时间</th>
+            <th>操作</th>
             </tr>
         </thead>
         <tbody>
@@ -20,6 +21,15 @@
             <td>{{ order.goodsName + "*" + order.goodsCount}}</td>
             <td>{{ getStatusText(order.status) }}</td>
             <td>{{ order.createDate }}</td>
+            <td>
+                <el-button 
+                    v-if="canCancel(order.status)"
+                    type="danger"
+                    size="mini"
+                    @click="handleCancelOrder(order.id)">
+                    取消订单
+                </el-button>
+            </td>
             </tr>
         </tbody>
         </table>
@@ -42,6 +52,18 @@
             </div>
         </el-dialog>
 
+        <!-- 取消订单确认对话框 -->
+        <el-dialog
+            title="确认取消"
+            :visible.sync="cancelDialogVisible"
+            width="30%">
+            <span>确定要取消这个订单吗？此操作不可恢复。</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="cancelDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="confirmCancelOrder">确 定</el-button>
+            </span>
+        </el-dialog>
+
         <!-- 分页组件 -->
         <div class="pagination">
         <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">上一页</button>
@@ -62,6 +84,8 @@
         totalOrders: 0, // 总订单数
         dialogVisible: false,
         orderDetail: null,
+        cancelDialogVisible: false,
+        currentCancelOrderId: null
         };
     },
     computed: {
@@ -115,6 +139,34 @@
                 this.$message.error('获取订单详情失败');
             }
         },
+        canCancel(status) {
+            // 只有未支付(0)和已支付未发货(1)的订单可以取消
+            return status === 0 || status === 1;
+        },
+        handleCancelOrder(orderId) {
+            this.currentCancelOrderId = orderId;
+            this.cancelDialogVisible = true;
+        },
+        async confirmCancelOrder() {
+            try {
+                const response = await this.$axios.post('/api/order/cancel', {
+                    id: this.currentCancelOrderId
+                });
+
+                if (response.data.code === 200) {
+                    this.$message.success('订单取消成功');
+                    this.cancelDialogVisible = false;
+                    this.fetchOrders(); // 刷新订单列表
+                } else {
+                    this.$message.error(response.data.message);
+                }
+            } catch (error) {
+                console.error('取消订单失败:', error);
+                this.$message.error('取消订单失败');
+            } finally {
+                this.currentCancelOrderId = null;
+            }
+        },
         getStatusText(status) {
             const statusMap = {
                 0: '未支付',
@@ -122,7 +174,8 @@
                 2: '已发货',
                 3: '已收货',
                 4: '已退款',
-                5: '已完成'
+                5: '已完成',
+                6: '已取消'
             };
             return statusMap[status] || '未知状态';
         },
@@ -173,5 +226,9 @@
   }
   .order-detail p {
     margin: 10px 0;
+  }
+  .el-button--mini {
+    padding: 7px 15px;
+    font-size: 12px;
   }
   </style>

@@ -7,6 +7,8 @@ import Login from '../views/Login.vue';
 import OrderList from '../views/OrderList.vue';
 import ProductList from '../views/ProductList.vue';
 import ProductDetail from '../views/ProductDetail.vue';
+import SeckillList from '../views/SeckillList.vue';
+import SeckillDetail from '../views/SeckillDetail.vue';
 //import { component } from 'vue/types/umd';
 
 const originalPush = VueRouter.prototype.push;
@@ -58,6 +60,16 @@ const routes = [
     path: '/orders',
     name: 'OrderList',
     component: OrderList
+  },
+  {
+    path: '/seckills',
+    name: 'SeckillList',
+    component: SeckillList
+  },
+  {
+    path: '/seckill/:id',
+    name: 'SeckillDetail',
+    component: SeckillDetail
   }
 ];
 

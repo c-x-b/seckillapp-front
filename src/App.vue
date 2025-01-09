@@ -6,6 +6,7 @@
         <el-menu-item index="/products">商品列表</el-menu-item>
         <el-menu-item index="/userinfo">用户信息</el-menu-item>
         <el-menu-item index="/orders">订单信息</el-menu-item>
+        <el-menu-item index="/seckills">秒杀活动</el-menu-item> <!-- 新增秒杀活动菜单项 -->
       <!-- </div> -->
       <!-- <div class="right-menu"> -->
         <el-menu-item index="/login">登录</el-menu-item>

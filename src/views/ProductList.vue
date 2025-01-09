@@ -42,7 +42,7 @@
       <el-row :gutter="20">
         <el-col :span="6" v-for="product in products" :key="product.id">
           <el-card :body-style="{ padding: '10px' }" class="product-card">
-            <img :src="product.img" class="product-image" @click="goToDetail(product.id)" />
+            <img :src="getImageUrl(product.img)" class="product-image" @click="goToDetail(product.id)" />
             <div class="product-info">
               <h3 class="product-name">{{ product.name }}</h3>
               <p class="product-price">￥{{ product.price }}</p>
@@ -62,7 +62,7 @@
       </div>
     </div>
   </template>
-  
+
   <script>
   export default {
     name: 'ProductList',
@@ -71,18 +71,18 @@
         searchKeyword: '',
         selectedCategory: '',
         priceRange: {
-          min: null,
-          max: null
+          min: 0,
+          max: 100000
         },
         categories: [], // 类别列表，从后端获取
         products: [], // 商品列表
         currentPage: 1,
-        pageSize: 12,
+        pageSize: 5,
         total: 0
       };
     },
     mounted() {
-      this.fetchCategories();
+      // this.fetchCategories();
       this.fetchProducts();
     },
     methods: {
@@ -105,17 +105,17 @@
         page: this.currentPage,          // 当前页
         size: this.pageSize,             // 每页的商品数
         keyword: this.searchKeyword,     // 搜索关键词
-        category: this.selectedCategory, // 商品类别
+        // category: this.selectedCategory, // 商品类别
         priceMin: this.priceRange.min,   // 最低价格
         priceMax: this.priceRange.max   // 最高价格
       };
       // 发送 GET 请求，获取商品列表
-      this.$axios.get('/api/products', { params })
+      this.$axios.get('/api/products/getProducts', { params })
         .then(response => {
           // 请求成功，处理响应数据
           if (response.data.code === 200) {
-            this.products = response.data.data.records;  // 商品数据
-            this.total = response.data.data.total;      // 总记录数
+            this.products = response.data.data.content;  // 商品数据
+            this.total = response.data.data.totalElements;      // 总记录数
           } else {
             // 后端返回了错误信息
             this.$message.error(response.data.message);
@@ -126,6 +126,9 @@
           console.error(error);
           this.$message.error('获取商品列表失败');
         });
+      },
+      getImageUrl(imgPath) {
+        return `http://localhost:8081${imgPath}`; // 拼接后端基础路径
       },
       handleSearch() {
         this.currentPage = 1;
@@ -147,12 +150,12 @@
         this.fetchProducts();
       },
       goToDetail(productId) {
-        this.$router.push(`/product/${productId}`);
+        this.$router.push(`/products/${productId}`);
       }
     }
   };
   </script>
-  
+
   <style scoped>
   .product-list {
     padding: 20px;
@@ -185,4 +188,3 @@
     margin-top: 20px;
   }
   </style>
-  

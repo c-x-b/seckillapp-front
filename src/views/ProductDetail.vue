@@ -13,7 +13,7 @@
         <div class="product-images">
           <!-- 主图展示，点击后进入预览模式 -->
           <el-image
-            :src="mainImage"
+            :src="getImageUrl(mainImage)"
             :preview-src-list="imageList"
             fit="cover"
             class="main-image"
@@ -23,7 +23,7 @@
             <el-image
               v-for="(img, index) in imageList"
               :key="index"
-              :src="img"
+              :src="getImageUrl(img)"
               fit="cover"
               class="thumbnail-image"
               @click="changeMainImage(img)"
@@ -70,7 +70,7 @@
       </div>
     </div>
   </template>
-  
+
   <script>
   export default {
     name: 'ProductDetail',
@@ -106,6 +106,9 @@
       changeMainImage(img) {
         this.mainImage = img;
       },
+      getImageUrl(imgPath) {
+        return `http://localhost:8081${imgPath}`; // 拼接后端基础路径
+      },
       handleQuantityChange(value) {
         if (value > this.product.stock) {
           this.$message.warning('超出库存数量');
@@ -123,7 +126,7 @@
     }
   };
   </script>
-  
+
   <style scoped>
   .product-detail {
     padding: 20px;
@@ -182,4 +185,3 @@
     margin-top: 40px;
   }
   </style>
-  

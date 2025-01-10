@@ -66,9 +66,14 @@
 
         <!-- 分页组件 -->
         <div class="pagination">
-        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">上一页</button>
-        <span>第 {{ currentPage }} 页，共 {{ totalPages }} 页</span>
-        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">下一页</button>
+        <el-pagination
+          @current-change="changePage"
+          :current-page="currentPage"
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          :total="totalOrders"
+        ></el-pagination>
+
         </div>
     </div>
 </template>
@@ -209,6 +214,7 @@
   }
   
   .pagination {
+    text-align: center;
     margin-top: 20px;
   }
   

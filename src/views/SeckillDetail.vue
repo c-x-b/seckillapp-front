@@ -36,6 +36,7 @@
           <p class="seckill-title">{{ seckill.title }}</p>
           <div class="seckill-price">
             <span>价格：</span>
+            <span class="original-price">￥{{ seckill.originalPrice }}</span>
             <span class="price">￥{{ seckill.price }}</span>
           </div>
           <div class="seckill-stock">
@@ -48,14 +49,13 @@
             <el-input-number
               v-model="quantity"
               :min="1"
-              :max="seckill.stock"
-              @change="handleQuantityChange"
+              :max="Math.min(seckill.stock, seckill.purchaseLimit)"
             ></el-input-number>
+            <span class="purchase-limit">限购{{ seckill.purchaseLimit }}个</span>
           </div>
-          <!-- 购买按钮 -->
+          <!-- 倒计时按钮 -->
           <div class="purchase-buttons">
-            <el-button type="primary" size="large" @click="buyNow">立即购买</el-button>
-            <el-button type="warning" size="large" @click="addToCart">加入购物车</el-button>
+            <el-button type="primary" size="large" @click="seckillNow">{{ formatCountdown(seckill.countdown) }}</el-button>
           </div>
         </div>
       </div>
@@ -77,10 +77,23 @@
     data() {
       return {
         seckillId: this.$route.params.id,
-        seckill: {},
+        seckill: {
+          name: "test",
+          title: "test",
+          originalPrice: 100,
+          price: 50,
+          stock: 2,
+          purchaseLimit: 3,
+          startTime: '2025-01-10T10:00:00',
+          countdown: 10,
+          detail: "test",
+          img: "/images/product1.jpg"
+        },
         mainImage: '',
         imageList: [],
-        quantity: 1
+        quantity: 1,
+        lastClickTime: 0,
+        lastWarningTime: 0
       };
     },
     mounted() {
@@ -88,7 +101,7 @@
     },
     methods: {
       fetchseckillDetail() {
-        this.$axios.get(`/api/seckill/${this.seckillId}`)
+        this.$axios.get(`/api/seckillEvent/${this.seckillId}`)
           .then(response => {
             if (response.data.code === 200) {
               this.seckill = response.data.data;
@@ -102,23 +115,70 @@
             console.error(error);
             this.$message.error('获取秒杀详情失败');
           });
+        this.startCountdown();
       },
       changeMainImage(img) {
         this.mainImage = img;
       },
-      handleQuantityChange(value) {
-        if (value > this.seckill.stock) {
-          this.$message.warning('超出库存数量');
-          this.quantity = this.seckill.stock;
+      startCountdown() {
+        // 倒计时逻辑
+        const startTime = new Date(this.seckill.startTime).getTime();
+        const currentTime = new Date().getTime();
+        this.seckill.countdown = Math.max(0, Math.floor((startTime - currentTime) / 1000));
+        if (this.seckill.countdown > 0) {
+          const interval = setInterval(() => {
+            if (this.seckill.countdown > 0) {
+              this.seckill.countdown--;
+            } else {
+              this.seckill.countdown = '立即秒杀'
+              clearInterval(interval);
+            }
+          }, 1000);
+        } else {
+          this.seckill.countdown = '立即秒杀'
         }
       },
-      buyNow() {
-        // 立即购买逻辑
-        this.$message.success('购买功能尚未实现');
+      formatCountdown(countdown) {
+        if (typeof countdown === 'string') {
+          return countdown;
+        }
+        const hours = Math.floor(countdown / 3600);
+        const minutes = Math.floor((countdown % 3600) / 60);
+        const seconds = countdown - hours * 3600 - minutes * 60;
+        let result = '';
+        if (hours < 10) {
+          result += `0${hours}:`;
+        } else {
+          result += `${hours}:`;
+        }
+        if (minutes < 10 ) {
+          result += `0${minutes}:`;
+        } else {
+          result += `${minutes}:`;
+        }
+        if (seconds < 10) {
+          result += `0${seconds}`;
+        } else {
+          result += `${seconds}`;
+        }
+        return result;
       },
-      addToCart() {
-        // 加入购物车逻辑
-        this.$message.success('加入购物车功能尚未实现');
+      seckillNow() {
+        const currentTime = Date.now();
+        if (currentTime - this.lastClickTime < 1800) {
+          if (currentTime - this.lastWarningTime >= 1000) {
+            this.$message.warning('请勿频繁点击');
+            this.lastWarningTime = currentTime;
+          }
+          return;
+        }
+        this.lastClickTime = currentTime;
+        if (typeof this.seckill.countdown === 'number' && this.seckill.countdown > 0) {
+          this.$message.warning('秒杀未开始');
+          return;
+        }
+        // TODO 秒杀逻辑
+        this.$message.success('秒杀功能尚未实现');
       }
     }
   };
@@ -169,11 +229,23 @@
     color: red;
     margin-bottom: 10px;
   }
+  .original-price {
+    text-decoration: line-through;
+    margin-right: 10px;
+    font-size: 16px;
+  }
+  .price {
+    font-size: 24px;
+  }
   .seckill-stock {
     margin-bottom: 10px;
   }
   .seckill-quantity {
     margin-bottom: 20px;
+  }
+  .purchase-limit {
+    margin-left: 10px;
+    color: #666;
   }
   .purchase-buttons .el-button {
     margin-right: 20px;
@@ -182,4 +254,3 @@
     margin-top: 40px;
   }
   </style>
-  

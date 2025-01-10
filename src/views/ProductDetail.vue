@@ -54,7 +54,7 @@
           </div>
           <!-- 购买按钮 -->
           <div class="purchase-buttons">
-            <el-button type="primary" size="large" @click="buyNow">立即购买</el-button>
+            <el-button type="primary" size="large" @click="placeOrder">立即购买</el-button>
             <el-button type="warning" size="large" @click="addToCart">加入购物车</el-button>
           </div>
         </div>
@@ -115,14 +115,33 @@
           this.quantity = this.product.stock;
         }
       },
-      buyNow() {
-        // 立即购买逻辑
-        this.$message.success('购买功能尚未实现');
-      },
       addToCart() {
         // 加入购物车逻辑
         this.$message.success('加入购物车功能尚未实现');
-      }
+      },
+      placeOrder() {
+        // 获取当前商品的 ID 和购买数量
+        const orderRequest = {
+          goodsId: this.productId, // 当前商品 ID
+          orderAmount: this.quantity, // 购买的数量
+        };
+
+        // 调用后端接口
+        this.$axios.post('/api/AddOrder', orderRequest)
+          .then((response) => {
+            if (response.data.code === 200) {
+              // 提示订单成功，并跳转到订单列表页面
+              this.$message.success('订单创建成功！');
+              this.$router.push('/orders');
+            } else {
+              this.$message.error(response.data.message || '下单失败');
+            }
+          })
+          .catch((error) => {
+            console.error('下单失败:', error);
+            this.$message.error('下单失败，请稍后再试');
+          });
+      },
     }
   };
   </script>

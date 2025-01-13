@@ -3,7 +3,7 @@
       <!-- 面包屑导航（可选） -->
       <div class="breadcrumb">
         <el-breadcrumb separator="/">
-          <el-breadcrumb-item><router-link to="/">首页</router-link></el-breadcrumb-item>
+          <el-breadcrumb-item><router-link to="/seckills">秒杀活动</router-link></el-breadcrumb-item>
           <el-breadcrumb-item>秒杀详情</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -13,7 +13,7 @@
         <div class="seckill-images">
           <!-- 主图展示，点击后进入预览模式 -->
           <el-image
-            :src="mainImage"
+            :src="getImageUrl(mainImage)"
             :preview-src-list="imageList"
             fit="cover"
             class="main-image"
@@ -23,7 +23,7 @@
             <el-image
               v-for="(img, index) in imageList"
               :key="index"
-              :src="img"
+              :src="getImageUrl(img)"
               fit="cover"
               class="thumbnail-image"
               @click="changeMainImage(img)"
@@ -37,7 +37,7 @@
           <div class="seckill-price">
             <span>价格：</span>
             <span class="original-price">￥{{ seckill.originalPrice }}</span>
-            <span class="price">￥{{ seckill.price }}</span>
+            <span class="price">￥{{ seckill.seckillPrice }}</span>
           </div>
           <div class="seckill-stock">
             库存：<span>{{ seckill.stock > 0 ? seckill.stock : '缺货' }}</span>
@@ -81,10 +81,11 @@
           name: "test",
           title: "test",
           originalPrice: 100,
-          price: 50,
+          seckillPrice: 50,
           stock: 2,
           purchaseLimit: 3,
           startTime: '2025-01-10T10:00:00',
+          endTime: '2025-01-19T12:00:00',
           countdown: 10,
           detail: "test",
           img: "/images/product1.jpg"
@@ -100,13 +101,17 @@
       this.fetchseckillDetail();
     },
     methods: {
+      getImageUrl(imgPath) {
+        return `${this.$axios.defaults.baseURL}${imgPath}`; // 拼接后端基础路径
+      },
       fetchseckillDetail() {
-        this.$axios.get(`/api/seckillEvent/${this.seckillId}`)
+        this.$axios.get(`/api/seckill/${this.seckillId}`)
           .then(response => {
             if (response.data.code === 200) {
               this.seckill = response.data.data;
               this.imageList = [this.seckill.img]; // 如果有多张图片，可调整此处
               this.mainImage = this.seckill.img;
+              this.startCountdown();
             } else {
               this.$message.error(response.data.message);
             }
@@ -115,7 +120,6 @@
             console.error(error);
             this.$message.error('获取秒杀详情失败');
           });
-        this.startCountdown();
       },
       changeMainImage(img) {
         this.mainImage = img;

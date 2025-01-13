@@ -128,7 +128,7 @@
         });
       },
       getImageUrl(imgPath) {
-        return `http://localhost:8081${imgPath}`; // 拼接后端基础路径
+        return `${this.$axios.defaults.baseURL}${imgPath}`; // 拼接后端基础路径
       },
       handleSearch() {
         this.currentPage = 1;

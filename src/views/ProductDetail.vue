@@ -3,7 +3,7 @@
       <!-- 面包屑导航（可选） -->
       <div class="breadcrumb">
         <el-breadcrumb separator="/">
-          <el-breadcrumb-item><router-link to="/">首页</router-link></el-breadcrumb-item>
+          <el-breadcrumb-item><router-link to="/products">商品列表</router-link></el-breadcrumb-item>
           <el-breadcrumb-item>商品详情</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -107,7 +107,7 @@
         this.mainImage = img;
       },
       getImageUrl(imgPath) {
-        return `http://localhost:8081${imgPath}`; // 拼接后端基础路径
+        return `${this.$axios.defaults.baseURL}${imgPath}`; // 拼接后端基础路径
       },
       handleQuantityChange(value) {
         if (value > this.product.stock) {

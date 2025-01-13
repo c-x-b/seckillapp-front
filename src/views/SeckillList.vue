@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     getImageUrl(imgPath) {
-      return `http://localhost:8081${imgPath}`; // 拼接后端基础路径
+      return `${this.$axios.defaults.baseURL}${imgPath}`; // 拼接后端基础路径
     },
     goToSeckillDetail(productId) {
       this.$router.push(`/seckill/${productId}`);
@@ -59,11 +59,12 @@ export default {
         page: this.currentPage,
         size: this.pageSize
       };
-      this.$axios.get('/api/seckillEvents', { params })
+      this.$axios.get('/api/seckills', { params })
         .then(response => {
           if (response.data.code === 200) {
             this.seckillProducts = response.data.data.content;
             this.total = response.data.data.totalElements;
+            this.calculateRemainingTime();
           } else {
             this.$message.error(response.data.message);
           }
@@ -71,9 +72,7 @@ export default {
         .catch(error => {
           console.error(error);
           this.$message.error('获取秒杀活动列表失败');
-          
         });
-        this.calculateRemainingTime();
     },
     calculateRemainingTime() {
       this.seckillProducts.forEach(product => {

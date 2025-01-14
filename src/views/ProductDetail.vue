@@ -14,7 +14,7 @@
           <!-- 主图展示，点击后进入预览模式 -->
           <el-image
             :src="getImageUrl(mainImage)"
-            :preview-src-list="imageList"
+            :preview-src-list="imageList.map(img => getImageUrl(img))"
             fit="cover"
             class="main-image"
           ></el-image>

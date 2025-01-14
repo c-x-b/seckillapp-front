@@ -14,7 +14,7 @@
           <!-- 主图展示，点击后进入预览模式 -->
           <el-image
             :src="getImageUrl(mainImage)"
-            :preview-src-list="imageList"
+            :preview-src-list="imageList.map(img => getImageUrl(img))"
             fit="cover"
             class="main-image"
           ></el-image>
@@ -102,10 +102,14 @@
     },
     methods: {
       getImageUrl(imgPath) {
-        return `${this.$axios.defaults.baseURL}${imgPath}`; // 拼接后端基础路径
+        const url = `${this.$axios.defaults.baseURL}${imgPath}`;
+        console.log("Seckill Product Image URL:", url);
+        return url; // 拼接后端基础路径
       },
       fetchseckillDetail() {
-        this.$axios.get(`/api/seckill/${this.seckillId}`)
+        const url = `/api/seckill/${this.seckillId}`;
+        console.log("Request URL:", url); // 添加这一行
+        this.$axios.get(url)
           .then(response => {
             if (response.data.code === 200) {
               this.seckill = response.data.data;
@@ -182,7 +186,26 @@
           return;
         }
         // TODO 秒杀逻辑
-        this.$message.success('秒杀功能尚未实现');
+        const seckillRequest = {
+          seckillId: this.seckillId,
+          orderAmount: this.quantity,
+          orderTime: new Date()
+        };
+
+        this.$axios.post('/api/seckill/createOrder', seckillRequest)
+          .then(response => {
+            if (response.data.code === 200) {
+              this.$message.success('秒杀成功');
+              // 处理秒杀成功后的逻辑，例如跳转到订单详情页
+              //this.$router.push(`/order/${response.data.data.orderId}`);
+            } else {
+              this.$message.error(response.data.message);
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            this.$message.error('秒杀请求失败');
+          });
       }
     }
   };

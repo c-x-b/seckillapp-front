@@ -34,8 +34,8 @@ export default {
   data() {
     return {
       seckillProducts: [
-        { id: 1, name: '商品1', seckillPrice: 100, stock: 10, startTime: '2023-10-01T10:00:00', remainingTime: 0, img: '/images/product1.jpg' },
-        { id: 2, name: '商品2', seckillPrice: 200, stock: 20, startTime: '2025-01-10T12:00:00', remainingTime: 0, img: '/images/product2.jpg' },
+        // { id: 1, name: '商品1', seckillPrice: 100, stock: 10, startTime: '2023-10-01T10:00:00', remainingTime: 0, img: '/images/product1.jpg' },
+        // { id: 2, name: '商品2', seckillPrice: 200, stock: 20, startTime: '2025-01-10T12:00:00', remainingTime: 0, img: '/images/product2.jpg' },
         // ...更多商品
       ],
       currentPage: 1,

@@ -197,7 +197,7 @@
             if (response.data.code === 200) {
               this.$message.success('秒杀成功');
               // 处理秒杀成功后的逻辑，例如跳转到订单详情页
-              //this.$router.push(`/order/${response.data.data.orderId}`);
+              this.$router.push('/orders');
             } else {
               this.$message.error(response.data.message);
             }

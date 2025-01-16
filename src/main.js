@@ -21,13 +21,15 @@ axiosIntance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-//axiosIntance.defaults.baseURL = process.env.VUE_APP_API;
+axiosIntance.defaults.baseURL = process.env.VUE_APP_API;
 Vue.prototype.$axios = axiosIntance;
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 
+Vue.prototype.$bus = new Vue();
+
 new Vue({
-  el: '#app',
+  //el: '#app',
   router,
   store,
   render: (h) => h(App),

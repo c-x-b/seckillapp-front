@@ -92,6 +92,9 @@ export default {
             // 保存用户信息（可选）
             const user = response.data.data.user;
             this.$store.commit('SET_USER', user);
+            // 触发事件，通知 App.vue 更新状态
+            this.$bus.$emit('login', user.username);
+            console.log("Bus Emit in Login: ", user.username);
             // 跳转到主页或用户中心
             this.$router.push('/');
           } else {
